@@ -1,0 +1,116 @@
+// Define the data model using Prisma schema
+
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+
+  provider = "postgresql"
+
+  url = env("POSTGRES_PRISMA_URL") // uses connection pooling
+
+  directUrl = env("POSTGRES_URL_NON_POOLING") // uses a direct connection
+
+}
+
+
+// Table: Voter
+model Voter {
+  id          Int           @id @default(autoincrement())
+  firstName   String
+  lastName    String
+  age         Int
+  email       String        @unique
+  voted       Boolean       @default(false)
+  createdAt   DateTime      @default(now())
+  Vote        Vote[]
+  UserProfile UserProfile[]
+}
+
+// Table: Candidate
+model Candidate {
+  id         Int      @id @default(autoincrement())
+  firstName  String
+  lastName   String
+  party      String
+  experience Float
+  createdAt  DateTime @default(now())
+  Vote       Vote[]
+}
+
+// Table: Election
+model Election {
+  id        Int      @id @default(autoincrement())
+  year      Int
+  startDate DateTime
+  endDate   DateTime
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+  Vote      Vote[]
+}
+
+// M:N Relationship Table: Vote
+model Vote {
+  id          Int      @id @default(autoincrement())
+  voterId     Int
+  candidateId Int
+  electionId  Int
+  createdAt   DateTime @default(now())
+
+  // Define Foreign Keys
+  voter     Voter     @relation(fields: [voterId], references: [id])
+  candidate Candidate @relation(fields: [candidateId], references: [id])
+  election  Election  @relation(fields: [electionId], references: [id])
+
+  // Define Unique Constraint for M:N Relationship
+  @@unique([voterId, electionId])
+}
+
+// Enum: Gender
+enum Gender {
+  MALE
+  FEMALE
+  OTHER
+}
+
+// Table: UserProfile
+model UserProfile {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  gender    Gender
+  birthdate DateTime
+  createdAt DateTime @default(now())
+
+  // Define Foreign Key
+  user Voter @relation(fields: [userId], references: [id])
+}
+
+// View: ActiveElectionsView
+model ActiveElectionsView {
+  id Int @id()
+
+  year      Int
+  startDate DateTime
+  endDate   DateTime
+  active    Boolean
+
+  // Specify that this is a View
+  @@map(name: "active_elections_view")
+}
+
+// View: VoterStatsView
+model VoterStatsView {
+  id Int @id()
+
+  voterId   Int
+  firstName String
+  lastName  String
+  email     String
+  age       Int
+  voted     Boolean
+
+  // Specify that this is a View
+  @@map(name: "voter_stats_view")
+}

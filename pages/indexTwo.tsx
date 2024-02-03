@@ -1,13 +1,12 @@
+// pages/index.js
 import React from "react";
-import { GetStaticProps } from "next";
-import Layout from "../components/Layout";
 import prisma from "../lib/prisma";
 import Vote, { VoteProps } from "../components/Vote";
-import { cloneDeep } from "lodash";
+import Layout from "../components/Layout";
 
-export const getStaticProps: GetStaticProps = async () => {
+export async function getStaticProps() {
 	try {
-		const vote = await prisma.vote.findMany({
+		const data = await prisma.vote.findMany({
 			where: { id: 1 },
 			include: {
 				voter: {
@@ -17,7 +16,7 @@ export const getStaticProps: GetStaticProps = async () => {
 		});
 		return {
 			props: {
-				vote: JSON.parse(JSON.stringify(vote)),
+				data: JSON.parse(JSON.stringify(data)),
 			},
 			revalidate: 10,
 		};
@@ -25,23 +24,22 @@ export const getStaticProps: GetStaticProps = async () => {
 		console.error("Error fetching data:", error);
 		return {
 			props: {
-				vote: [],
+				data: [],
 			},
 		};
 	}
-};
+}
 
 type Props = {
-	vote: VoteProps[];
+	data: VoteProps[];
 };
-
 const Blog: React.FC<Props> = (props) => {
 	return (
 		<Layout>
 			<div className="page">
 				<h1>Public Feed</h1>
 				<main>
-					{props.vote.map((vote) => (
+					{props.data.map((vote) => (
 						<div key={vote.id} className="vote">
 							<Vote vote={vote} />
 						</div>
@@ -63,6 +61,19 @@ const Blog: React.FC<Props> = (props) => {
 				}
 			`}</style>
 		</Layout>
+	);
+};
+
+const Home = ({ data }) => {
+	return (
+		<div>
+			<h1>Prisma Data on Website</h1>
+			<ul>
+				{data.map((item) => (
+					<li key={item.id}>{JSON.stringify(item)}</li>
+				))}
+			</ul>
+		</div>
 	);
 };
 
