@@ -7,7 +7,7 @@ export type VoteProps = {
   voterId: number;
   candidateId: number;
   electionId: number;
-  createdAt: Date; // Assuming createdAt is a string after serialization
+  createdAt: Date;
   voter: {
     id: number;
     firstName: string;
@@ -31,7 +31,6 @@ const VotePost: React.FC<{ vote: VoteProps }> = ({ vote }) => {
       <br></br>
       <small>Voted: {voterVoted}</small>
 
-      {/* Additional properties as needed */}
       <style jsx>{`
         div {
           color: inherit;
