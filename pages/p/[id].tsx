@@ -8,7 +8,7 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
   try {
     const vote = await prisma.vote.findUnique({
       where: {
-        id: Number(params?.id),
+        id: 1,
       },
       include: {
         voter: {
@@ -17,12 +17,7 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
       },
     });
 
-    console.log("Vote data:", vote);
-
-    // Convert Date to string
-    if (vote && vote.createdAt) {
-      vote.formattedCreatedAt = vote.createdAt.toISOString();
-    }
+    console.log("Vote data:", JSON.stringify(vote));
 
     return {
       props: vote,
@@ -36,7 +31,6 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
     };
   }
 };
-
 const Vote: React.FC<VoteProps> = (props) => {
   if (!props.voter) {
     return (
@@ -54,7 +48,7 @@ const Vote: React.FC<VoteProps> = (props) => {
   return (
     <Layout>
       <div>
-        <h2>"balls"</h2>
+        <h2>{firstName}</h2>
         <p>By </p>
       </div>
       <style jsx>{`

@@ -2,6 +2,7 @@
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 
+
 async function seed() {
 	// Seed data for the Voter table
 	await prisma.voter.createMany({

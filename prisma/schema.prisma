@@ -1,20 +1,12 @@
-// Define the data model using Prisma schema
-
-
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-
   provider = "postgresql"
-
-  url = env("POSTGRES_PRISMA_URL") // uses connection pooling
-
-  directUrl = env("POSTGRES_URL_NON_POOLING") // uses a direct connection
-
+  url = env("POSTGRES_PRISMA_URL") 
+  directUrl = env("POSTGRES_URL_NON_POOLING")
 }
-
 
 // Table: Voter
 model Voter {
@@ -58,13 +50,11 @@ model Vote {
   candidateId Int
   electionId  Int
   createdAt   DateTime @default(now())
-
-  // Define Foreign Keys
+  formattedCreatedAt String @map(name: "created_at_formatted")
   voter     Voter     @relation(fields: [voterId], references: [id])
   candidate Candidate @relation(fields: [candidateId], references: [id])
   election  Election  @relation(fields: [electionId], references: [id])
 
-  // Define Unique Constraint for M:N Relationship
   @@unique([voterId, electionId])
 }
 
@@ -83,7 +73,6 @@ model UserProfile {
   birthdate DateTime
   createdAt DateTime @default(now())
 
-  // Define Foreign Key
   user Voter @relation(fields: [userId], references: [id])
 }
 
@@ -96,7 +85,6 @@ model ActiveElectionsView {
   endDate   DateTime
   active    Boolean
 
-  // Specify that this is a View
   @@map(name: "active_elections_view")
 }
 
@@ -111,6 +99,5 @@ model VoterStatsView {
   age       Int
   voted     Boolean
 
-  // Specify that this is a View
   @@map(name: "voter_stats_view")
 }

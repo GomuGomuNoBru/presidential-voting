@@ -7,8 +7,7 @@ export type VoteProps = {
   voterId: number;
   candidateId: number;
   electionId: number;
-  createdAt: Date;
-  formattedCreatedAt?: string; // Add this line
+  createdAt: Date; // Assuming createdAt is a string after serialization
   voter: {
     id: number;
     firstName: string;
